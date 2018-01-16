@@ -1,4 +1,4 @@
-#include "../library.h"
+#include "../include/SplayTree.h"
 #include "catch.hpp"
 
 SCENARIO("if element already exists => return false")

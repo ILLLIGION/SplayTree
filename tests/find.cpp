@@ -1,4 +1,4 @@
-#include "../library.h"
+#include "../include/SplayTree.h"
 #include "catch.hpp"
 
 SCENARIO("pointer returned, if an element is in the tree") 
