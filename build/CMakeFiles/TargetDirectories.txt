@@ -1,5 +1,0 @@
-/home/nikita/GitHub/SplayTree/build/CMakeFiles/edit_cache.dir
-/home/nikita/GitHub/SplayTree/build/CMakeFiles/Examples.dir
-/home/nikita/GitHub/SplayTree/build/CMakeFiles/untitled.dir
-/home/nikita/GitHub/SplayTree/build/CMakeFiles/Tests.dir
-/home/nikita/GitHub/SplayTree/build/CMakeFiles/rebuild_cache.dir
