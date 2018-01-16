@@ -8,3 +8,4 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(untitled STATIC ${CMAKE_CURRENT_SOURCE_DIR}/library.cpp)
 
 add_executable(Examples ${CMAKE_CURRENT_SOURCE_DIR} main.cpp)
+add_executable(Tests ${TESTS_SOURCE} tests/remove.cpp tests/find.cpp tests/main.cpp tests/insert.cpp) 

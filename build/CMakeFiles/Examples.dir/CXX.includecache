@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nikita/GitHub/SplayTree/library.h
+iostream
+-
+memory
+-
+
+/home/nikita/GitHub/SplayTree/main.cpp
+library.h
+/home/nikita/GitHub/SplayTree/library.h
+

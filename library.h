@@ -238,6 +238,8 @@ public:
         std::shared_ptr<Node> thisNode = root_;
         while (!foundPlace)
         {
+            if (value == thisNode->value)
+                return false;
             if (value < thisNode->value)
             {
                 if (!thisNode->left_)
@@ -304,10 +306,10 @@ public:
     ////////////////////////////
 
     ////////////////MAXIMUM,MERGE,DELETE/////////////////
-    auto splay_maximum() -> bool
+/*    auto splay_maximum() -> bool
     {
         if (!root_)
-            return nullptr;
+            return 0;
 
         std::shared_ptr<Node> thisNode = root_;
         while(1)
@@ -335,8 +337,57 @@ public:
         SplayTree right_tree;
         left_tree.root_ = root_->left_;
         right_tree.root_ = root_->right_;
-        delete root_;
+        root_=nullptr;
         left_tree.merge(right_tree);
+    }
+    */
+    auto max(std::shared_ptr<Node> left_tree) const -> std::shared_ptr<Node> {
+        if (left_tree == nullptr)
+            return nullptr;
+        std::shared_ptr<Node> tmp = left_tree;
+        while (tmp->right_ != nullptr)
+            tmp = tmp->right_;
+        return tmp;
+    }
+
+    auto merge(std::shared_ptr<Node> left_tree, std::shared_ptr<Node> right_tree) -> bool {
+        std::shared_ptr<Node> new_root = max(left_tree);
+        if (new_root == nullptr)
+            return false;
+        splay(new_root);
+
+        new_root->right_ = right_tree;
+        if (right_tree != nullptr)
+            right_tree->parent_ = new_root;
+        return true;
+    }
+
+    auto remove(const T& value) -> bool {
+        if(search(value))
+        {
+            search(value);
+            if (root_->right_ == nullptr) {
+                root_ = root_->left_;
+                if (root_ != nullptr)
+                    root_->parent_ = nullptr;
+                //     --elements_;
+                return true;
+            }
+
+            if (!merge(root_->left_, root_->right_)) {
+                root_ = root_->right_;
+                if (root_ != nullptr)
+                    root_->parent_ = nullptr;
+                //     --elements_;
+                return true;
+            }
+           // to_del->right_ = nullptr;
+           // to_del->left_ = nullptr;
+           // to_del = nullptr;
+            // --elements_;
+            return true;
+        }
+        else return false;
     }
     //////////////////////////
     auto operator == (const SplayTree& tree) -> bool
