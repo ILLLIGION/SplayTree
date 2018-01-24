@@ -1,4 +1,4 @@
-#include "../include/SplayTree.h"
+#include <../source/SplayTree.cpp>
 #include "catch.hpp"
 
 SCENARIO("Element isn't found")
