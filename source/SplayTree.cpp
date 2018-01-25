@@ -1,10 +1,12 @@
 #include "../include/SplayTree.hpp"
 
 template <typename T>
-SplayTree<T>::Node::Node(T value_) : value(value_), left_(nullptr), right_(nullptr), parent_(nullptr) {};
+SplayTree<T>::Node::Node(short key_, T value_) : key(key_), value(value_), left_(nullptr), right_(nullptr),
+                                                                                        parent_(nullptr) {};
 
 template <typename T>
-SplayTree<T>::Node::~Node() {
+SplayTree<T>::Node::~Node()
+{
     left_ = nullptr;
     right_ = nullptr;
 };
@@ -18,7 +20,7 @@ auto SplayTree<T>::Node::equal(std::shared_ptr<Node> tree) const noexcept -> boo
         return false;
 
     bool equalLeft = true; bool equalRight = true;
-    if (value != tree->value)
+    if ((value != tree->value) || (key != tree->key))
         return false;
     else
     {
@@ -35,15 +37,17 @@ auto SplayTree<T>::Node::equal(std::shared_ptr<Node> tree) const noexcept -> boo
 template <typename T>
 SplayTree<T>::SplayTree() : root_(nullptr) {};
 
-template <typename T>
+/*template <typename T>
 SplayTree<T>::SplayTree(const std::initializer_list<T>& list) : root_(nullptr)
 {
     for (auto it = list.begin(); it != list.end(); ++it)
         insert(*it);
 };
+*/
 
 template <typename T>
-auto SplayTree<T>::rotate_left(std::shared_ptr<Node> node) -> void {
+auto SplayTree<T>::rotate_left(std::shared_ptr<Node> node) -> void
+{
     std::shared_ptr<Node> tmp = node->left_;
     if (node->parent_ == nullptr)
         root_ = tmp;
@@ -60,7 +64,8 @@ auto SplayTree<T>::rotate_left(std::shared_ptr<Node> node) -> void {
 }
 
 template <typename T>
-auto SplayTree<T>::rotate_right(std::shared_ptr<Node> node) -> void {
+auto SplayTree<T>::rotate_right(std::shared_ptr<Node> node) -> void
+{
     std::shared_ptr<Node> tmp = node->right_;
     if (node->parent_ == nullptr)
         root_ = tmp;
@@ -77,7 +82,8 @@ auto SplayTree<T>::rotate_right(std::shared_ptr<Node> node) -> void {
 }
 
 template <typename T>
-auto SplayTree<T>::splay(std::shared_ptr<Node> node) -> void {
+auto SplayTree<T>::splay(std::shared_ptr<Node> node) -> void
+{
     if (node == nullptr)
         return;
     while (node->parent_ != nullptr && node->parent_->parent_ != nullptr) {
@@ -120,24 +126,25 @@ auto SplayTree<T>::splay(std::shared_ptr<Node> node) -> void {
 }
 
 template <typename T>
-auto SplayTree<T>::insert(const T& value) -> bool
+auto SplayTree<T>::insert(const short key, const T& value) -> bool
 {
     bool foundPlace = false;
-    if (root_ == nullptr) {
-        root_ = std::make_shared<Node>(value);
+    if (root_ == nullptr)
+    {
+        root_ = std::make_shared<Node>(key, value);
         return true;
     }
 
     std::shared_ptr<Node> thisNode = root_;
     while (!foundPlace)
     {
-        if (value == thisNode->value)
+        if (key == thisNode->key)
             return false;
-        if (value < thisNode->value)
+        if (key < thisNode->key)
         {
             if (!thisNode->left_)
             {
-                thisNode->left_ = std::make_shared<Node>(value);
+                thisNode->left_ = std::make_shared<Node>(key, value);
                 thisNode->left_->parent_ = thisNode;
                 thisNode = thisNode->left_;
                 foundPlace = true;
@@ -147,7 +154,7 @@ auto SplayTree<T>::insert(const T& value) -> bool
         }
         else if (!thisNode->right_)
         {
-            thisNode->right_ = std::make_shared<Node>(value);
+            thisNode->right_ = std::make_shared<Node>(key, value);
             thisNode->right_->parent_ = thisNode;
             thisNode = thisNode -> right_;
             foundPlace = true;
@@ -160,9 +167,8 @@ auto SplayTree<T>::insert(const T& value) -> bool
     return foundPlace;
 };
 
-
 template <typename T>
-auto SplayTree<T>::search(const T& value) -> const T*
+auto SplayTree<T>::search(const short key) -> const T*
 {
     if (!root_)
         return nullptr;
@@ -170,13 +176,13 @@ auto SplayTree<T>::search(const T& value) -> const T*
     std::shared_ptr<Node> thisNode = root_;
     while (1)
     {
-        if (value == thisNode->value)
+        if (key == thisNode->key)
         {
             splay(thisNode);
             this -> root_ = thisNode;
             return &thisNode->value;
         }
-        else if (value < thisNode->value)
+        else if (key < thisNode->key)
             if (thisNode->left_)
                 thisNode = thisNode->left_;
             else
@@ -185,7 +191,8 @@ auto SplayTree<T>::search(const T& value) -> const T*
                 this -> root_ = thisNode;
                 return nullptr;
             }
-        else {
+        else
+        {
             if (thisNode->right_)
                 thisNode = thisNode->right_;
             else
@@ -199,18 +206,20 @@ auto SplayTree<T>::search(const T& value) -> const T*
 };
 
 template <typename T>
-auto SplayTree<T>::max(std::shared_ptr<Node> left_tree) const -> std::shared_ptr<Node> {
-    if (left_tree == nullptr)
+auto SplayTree<T>::max() const -> const T*
+{
+    if (root_ == nullptr)
         return nullptr;
-    std::shared_ptr<Node> tmp = left_tree;
+    std::shared_ptr<Node> tmp = root_;
     while (tmp->right_ != nullptr)
         tmp = tmp->right_;
-    return tmp;
+    return &tmp -> value;
 }
 
 template <typename T>
-auto SplayTree<T>::merge(std::shared_ptr<Node> left_tree, std::shared_ptr<Node> right_tree) -> bool {
-    std::shared_ptr<Node> new_root = max(left_tree);
+auto SplayTree<T>::merge(std::shared_ptr<Node> left_tree, std::shared_ptr<Node> right_tree) -> bool
+{
+    std::shared_ptr<Node> new_root = max_merge(left_tree);
     if (new_root == nullptr)
         return false;
     splay(new_root);
@@ -222,10 +231,22 @@ auto SplayTree<T>::merge(std::shared_ptr<Node> left_tree, std::shared_ptr<Node> 
 }
 
 template <typename T>
-auto SplayTree<T>::remove(const T& value) -> bool {
-    if(search(value))
+auto SplayTree<T>::max_merge(std::shared_ptr<Node> left_tree) const -> std::shared_ptr<Node>
+{
+    if (left_tree == nullptr)
+        return nullptr;
+    std::shared_ptr<Node> tmp = left_tree;
+    while (tmp->right_ != nullptr)
+        tmp = tmp->right_;
+    return tmp;
+}
+
+template <typename T>
+auto SplayTree<T>::remove(const short key) -> bool
+{
+    if(search(key))
     {
-        search(value);
+        search(key);
         if (root_->right_ == nullptr) {
             root_ = root_->left_;
             if (root_ != nullptr)
@@ -245,14 +266,14 @@ auto SplayTree<T>::remove(const T& value) -> bool {
 }
 
 template <typename T>
-auto SplayTree<T>::min(std::shared_ptr<Node> tree) const -> std::shared_ptr<Node>
+auto SplayTree<T>::min() const -> const T*
 {
-    if (tree == nullptr)
+    if (root_ == nullptr)
         return nullptr;
-    std::shared_ptr<Node> tmp = tree;
+    std::shared_ptr<Node> tmp = root_;
     while (tmp->left_ != nullptr)
         tmp = tmp->left_;
-    return tmp;
+    return &tmp->value;
 }
 
 template <typename T>
@@ -260,3 +281,16 @@ auto SplayTree<T>::operator == (const SplayTree& tree) -> bool
 {
     return (root_->equal(tree.root_));
 };
+
+template <typename T>
+auto SplayTree<T>::print(std::ostream& out, std::shared_ptr<Node> node) const noexcept -> bool
+{
+    if (node)
+    {
+        print(out, node->left_);
+        out << "[" << node->key << ' ' << node->value << "]";
+        print(out, node->right_);
+        return true;
+    }
+    else return false;
+}
